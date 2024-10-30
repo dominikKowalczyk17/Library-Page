@@ -1,26 +1,35 @@
 import { Link } from 'react-router-dom';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 const BookList = ({ books }) => {
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+    <Carousel
+      axis='horizontal'
+      showArrows={true}
+      showStatus={false}
+      showThumbs={false}
+      infiniteLoop={true}
+      autoPlay={true}
+      interval={50000}
+      centerMode={false}
+    >
       {books.map((book) => (
-        <div
+        <Link
+          to={`/books/${book.isbn}`}
+          className='mt-2 block bg-indigo-200'
           key={book.isbn}
-          className='border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300'
         >
-          <h3 className='text-lg font-semibold'>{book.name}</h3>
-          <p className='text-gray-600'>Author: {book.author}</p>
-          <p className='text-gray-500'>Genre: {book.genre}</p>
-          <p className='text-sm'>{book.description}</p>
-          <Link
-            to={`/books/${book.isbn}`}
-            className='text-blue-500 hover:underline mt-2 block'
-          >
+          <div className='border rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer'>
+            <h3 className='text-lg font-semibold'>{book.name}</h3>
+            <p className='text-gray-600'>Author: {book.author}</p>
+            <p className='text-gray-500'>Genre: {book.genre}</p>
+            <p className='text-sm'>{book.description}</p>
             View Details
-          </Link>
-        </div>
+          </div>
+        </Link>
       ))}
-    </div>
+    </Carousel>
   );
 };
 

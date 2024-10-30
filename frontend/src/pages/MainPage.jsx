@@ -1,42 +1,48 @@
-import { useEffect, useState } from 'react';
-import BookList from './BookList';
+import { Link } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
+import backgroundImage from '../assets/library.png';
+import arrow from '../assets/arrow.png';
 
 const MainPage = () => {
-  const [popularBooks, setPopularBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPopularBooks = async () => {
-      try {
-        const response = await fetch('http://localhost:8081/api/books/popular');
-        const data = await response.json();
-        // Assuming the response contains an array of books
-        setPopularBooks(data);
-      } catch (error) {
-        console.error('Error fetching popular books:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPopularBooks();
-  }, []);
-
   return (
-    <div className='p-4'>
-      <header className='mb-4'>
-        <h1 className='text-3xl font-bold'>Welcome to the Library</h1>
-        <p className='mt-2 text-gray-700'>
-          Explore our collection of books and find your next read!
-        </p>
-        <SearchBar />
-      </header>
-
-      <section className='mt-6'>
-        <h2 className='text-2xl font-semibold mb-2'>Popular Books</h2>
-        {loading ? <p>Loading...</p> : <BookList books={popularBooks} />}
-      </section>
+    <div
+      className='relative min-h-screen flex flex-col items-center justify-center text-white bg-cover bg-center'
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
+      {/* Dimmed Overlay */}
+      <div className='absolute inset-0 bg-black opacity-40'></div>
+      {/* Navbar */}
+      <nav className='absolute top-8 flex gap-8 text-lg text-antiqueGold font-bold'>
+        <Link to='/about' className='hover:opacity-50'>
+          About
+        </Link>
+        <Link to='/events' className='hover:opacity-50'>
+          Events
+        </Link>
+        <Link to='/services' className='hover:opacity-50'>
+          Services
+        </Link>
+        <Link to='/contacts' className='hover:opacity-50'>
+          Contacts
+        </Link>
+      </nav>
+      {/* Main Heading */}
+      <h1 className='font-custom text-9xl text-center relative w-5/12 bg-clip-text text-transparent bg-gradient-to-r from-[#BFA675] to-[#D6C2A0] shadow-lg'>
+        Library of Antique Literature
+      </h1>
+      {/* Arrow Link to Catalog Page */}
+      <div className='absolute bottom-8 right-28 flex flex-col items-center'>
+        <Link
+          to='/catalog'
+          className='flex items-center text-sm text-antiqueGold font-bold gap-6 transition-transform duration-300 ease-in-out hover:translate-x-2'
+        >
+          <span>View Catalog</span>
+          <span
+            className='arrow mb-2 mt-2 w-16 h-16 bg-bottom bg-contain text-antiqueGold'
+            style={{ backgroundImage: `url(${arrow})` }}
+          ></span>
+        </Link>
+      </div>
     </div>
   );
 };
