@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="github.ahodanenok.maven.plugins.gwt.sdm.url.plugin" type="repository">
+    <properties maven-id="com.github.ahodanenok.maven.plugins:gwt-sdm-url-maven-plugin:1.0.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/ahodanenok/maven/plugins/gwt-sdm-url-maven-plugin/1.0.0/gwt-sdm-url-maven-plugin-1.0.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-plugin-api/3.0.5/maven-plugin-api-3.0.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.0.5/maven-model-3.0.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/2.0.6/plexus-utils-2.0.6.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/3.0.5/maven-artifact-3.0.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/sisu/sisu-inject-plexus/2.3.0/sisu-inject-plexus-2.3.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-component-annotations/1.5.5/plexus-component-annotations-1.5.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-classworlds/2.4/plexus-classworlds-2.4.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/sisu/sisu-inject-bean/2.3.0/sisu-inject-bean-2.3.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/sisu/sisu-guice/3.1.0/sisu-guice-3.1.0-no_aop.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/sisu/sisu-guava/0.9.9/sisu-guava-0.9.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
