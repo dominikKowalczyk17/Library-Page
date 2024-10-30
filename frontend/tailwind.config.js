@@ -2,7 +2,14 @@
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        antiqueGold: '#BFA675',
+      },
+      fontFamily: {
+        custom: ['TitleFont', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 };
