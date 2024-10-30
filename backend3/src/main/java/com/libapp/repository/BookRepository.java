@@ -2,6 +2,9 @@ package com.libapp.repository;
 
 import com.libapp.model.Book;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +106,21 @@ public class BookRepository {
             e.printStackTrace();
         }
         return popularBooks;
+    }
+
+    public void getBookImage(int bookId, String outputPath) throws SQLException, IOException {
+        String query = "SELECT image_data FROM library.books WHERE id = ?";
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, bookId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                byte[] imageData = rs.getBytes("image_data");
+                try (FileOutputStream fos = new FileOutputStream(new File(outputPath))) {
+                    fos.write(imageData);
+                }
+            }
+        }
     }
 }
 
