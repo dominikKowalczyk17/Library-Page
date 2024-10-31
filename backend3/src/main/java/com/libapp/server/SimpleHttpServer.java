@@ -1,10 +1,7 @@
 package com.libapp.server;
 
+import com.libapp.handler.*;
 import com.sun.net.httpserver.HttpServer;
-import com.libapp.handler.AddBookHandler;
-import com.libapp.handler.GetBookHandler;
-import com.libapp.handler.PopularBooksHandler;
-import com.libapp.handler.SearchBooksHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,7 +12,8 @@ public class SimpleHttpServer {
         server.createContext("/api/books/add", new AddBookHandler());
         server.createContext("/api/books/search", new SearchBooksHandler());
         server.createContext("/api/books", new GetBookHandler());
-        server.createContext("/api/books/popular", new PopularBooksHandler()); // New endpoint for popular books
+        server.createContext("/api/books/popular", new PopularBooksHandler());
+        server.createContext("/api/books/image", new GetImageHandler());
 
         server.setExecutor(null); // creates a default executor
         server.start();
