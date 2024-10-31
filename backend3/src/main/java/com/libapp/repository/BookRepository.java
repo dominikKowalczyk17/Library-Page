@@ -10,27 +10,24 @@ import java.util.List;
 import java.util.Properties;
 
 public class BookRepository {
-    private String url;
-    private String user;
-    private String password;
+    private String URL;
+    private String USER;
+    private String PASSWORD;
 
-    public BookRepository() {
-        loadDatabaseConfig();
-    }
-
-    private void loadDatabaseConfig() {
+    private void loadDBConfig() {
         Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("config.properties")) {
+        try(FileInputStream input = new FileInputStream("config.properties")) {
             properties.load(input);
-            this.url = properties.getProperty("db.url");
-            this.user = properties.getProperty("db.user");
-            this.password = properties.getProperty("db.password");
+            this.URL = properties.getProperty("db.url");
+            this.USER = properties.getProperty("db.username");
+            this.PASSWORD = properties.getProperty("db.password");
         } catch (IOException e) {
             System.out.println("Error loading database config: " + e.getMessage());
         }
     }
 
     private Connection connect() throws SQLException {
+        loadDBConfig();
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
@@ -38,7 +35,7 @@ public class BookRepository {
         }
 
         // Establish connection and print a message
-        Connection conn = DriverManager.getConnection(url, user, password);
+        Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
         System.out.println("Connected to the database.");
         return conn;
     }
