@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookRepository {
-    private static final String URL = "jdbc:postgresql://localhost:5432/LibApp";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "1234";
+    private static final String URL = "jdbc:postgresql://libappdb-libapp.g.aivencloud.com:11484/defaultdb?sslmode=require";
+    private static final String USER = "avnadmin";
+    private static final String PASSWORD = "AVNS_PCEElG1v4heesR-nEuF";
 
     private Connection connect() throws SQLException {
         try {
@@ -17,15 +17,20 @@ public class BookRepository {
         } catch (ClassNotFoundException e) {
             throw new SQLException("PostgreSQL JDBC Driver not found", e);
         }
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+
+        // Establish connection and print a message
+        Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        System.out.println("Connected to the database.");
+        return conn;
     }
 
-
     public void addBook(Book book) {
-        String sql = "INSERT INTO library.books (isbn, name, genre, description, author, popularity_score) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO books (isbn, title, genre, description, author, popularity_score) " +
+                "VALUES (?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT (isbn) DO NOTHING";
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, book.getIsbn());
-            pstmt.setString(2, book.getName());
+            pstmt.setString(1, book.getIsbn());
+            pstmt.setString(2, book.getTitle());
             pstmt.setString(3, book.getGenre());
             pstmt.setString(4, book.getDescription());
             pstmt.setString(5, book.getAuthor());
@@ -36,16 +41,16 @@ public class BookRepository {
         }
     }
 
-    public Book findByIsbn(int isbn) {
-        String sql = "SELECT * FROM library.books WHERE isbn = ?";
+    public Book findByIsbn(String isbn) {
+        String sql = "SELECT * FROM books WHERE isbn = ?";
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, isbn);
+            pstmt.setString(1, isbn);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 return new Book(
-                        rs.getInt("isbn"),
-                        rs.getString("name"),
+                        rs.getString("isbn"),
+                        rs.getString("title"),
                         rs.getString("genre"),
                         rs.getString("description"),
                         rs.getString("author"),
@@ -60,17 +65,16 @@ public class BookRepository {
         return null;
     }
 
-    public ArrayList<Book> findByKeyword(String keyword) {
-        ArrayList<Book> bookList = new ArrayList<>();
-        String sql = "SELECT * FROM library.books WHERE LOWER(name) LIKE LOWER(?)";
-        System.out.println("Searching for keyword: " + keyword); // Debugging output
+    public List<Book> findByKeyword(String keyword) {
+        List<Book> bookList = new ArrayList<>();
+        String sql = "SELECT * FROM books WHERE LOWER(title) LIKE LOWER(?)";
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, "%" + keyword + "%");
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 bookList.add(new Book(
-                        rs.getInt("isbn"), // Updated to getInt
-                        rs.getString("name"),
+                        rs.getString("isbn"),
+                        rs.getString("title"),
                         rs.getString("genre"),
                         rs.getString("description"),
                         rs.getString("author"),
@@ -80,19 +84,18 @@ public class BookRepository {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        System.out.println("Books found: " + bookList.size()); // Debugging output
         return bookList;
     }
 
     public List<Book> findPopularBooks() {
-        String sql = "SELECT * FROM library.books WHERE popularity_score > 50 ORDER BY popularity_score DESC LIMIT 10";
+        String sql = "SELECT * FROM public.books WHERE popularity_score > 9 ORDER BY popularity_score DESC LIMIT 10";
         List<Book> popularBooks = new ArrayList<>();
         try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 popularBooks.add(new Book(
-                        rs.getInt("isbn"), // Updated to getInt
-                        rs.getString("name"),
+                        rs.getString("isbn"),
+                        rs.getString("title"),
                         rs.getString("genre"),
                         rs.getString("description"),
                         rs.getString("author"),
@@ -105,4 +108,3 @@ public class BookRepository {
         return popularBooks;
     }
 }
-
