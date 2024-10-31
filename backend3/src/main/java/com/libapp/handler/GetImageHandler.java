@@ -2,61 +2,45 @@ package com.libapp.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.libapp.repository.BookRepository;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class GetImageHandler implements HttpHandler {
-    private final BookRepository repository = new BookRepository();
+    private static final String IMAGE_DIRECTORY = "C:\\Users\\Dominik\\Desktop\\Projects\\Library-Page\\backend3\\images\\book_covers";
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        // Set CORS headers
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+        // Extract the image filename from the request URI
+        String path = exchange.getRequestURI().getPath();
+        String filename = path.substring(path.lastIndexOf("/") + 1); // Get the file name from the path
 
-        if ("OPTIONS".equals(exchange.getRequestMethod())) {
-            // Handle preflight requests for CORS
-            exchange.sendResponseHeaders(204, -1);
-            return;
-        }
+        // Create the file object
+        File file = new File(IMAGE_DIRECTORY, filename);
 
-        if ("GET".equals(exchange.getRequestMethod())) {
-            String query = exchange.getRequestURI().getQuery();
-            String[] queryParams = query.split("=");
+        if (file.exists() && !file.isDirectory()) {
+            // Set the response headers
+            exchange.getResponseHeaders().add("Content-Type", "image/jpeg");
+            exchange.sendResponseHeaders(200, file.length());
 
-            if (queryParams.length == 2 && "isbn".equals(queryParams[0])) {
-                try {
-                    int isbn = Integer.parseInt(queryParams[1]);
-                    String outputPath = "temp_image.jpg"; // Temporary path to store the image
-
-                    // Fetch the image from the database
-                    repository.getBookImage(isbn, outputPath);
-
-                    // Set response headers and content type
-                    exchange.getResponseHeaders().set("Content-Type", "image/jpeg");
-                    byte[] imageBytes = Files.readAllBytes(Paths.get(outputPath));
-
-                    exchange.sendResponseHeaders(200, imageBytes.length);
-                    try (OutputStream os = exchange.getResponseBody()) {
-                        os.write(imageBytes);
-                    }
-
-                    // Clean up temporary image file
-                    Files.deleteIfExists(Paths.get(outputPath));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    exchange.sendResponseHeaders(500, -1);
+            // Read the file and write it to the output stream
+            try (FileInputStream fis = new FileInputStream(file);
+                 OutputStream os = exchange.getResponseBody()) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
                 }
-            } else {
-                exchange.sendResponseHeaders(400, -1); // Bad request if ISBN is missing or incorrect
             }
         } else {
-            exchange.sendResponseHeaders(405, -1); // Method not allowed
+            // If the file does not exist, send a 404 response
+            String response = "Image not found";
+            exchange.sendResponseHeaders(404, response.length());
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes());
+            }
         }
     }
 }

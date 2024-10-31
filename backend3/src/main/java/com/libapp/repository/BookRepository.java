@@ -3,6 +3,7 @@ package com.libapp.repository;
 import com.libapp.model.Book;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -122,5 +123,33 @@ public class BookRepository {
             e.printStackTrace();
         }
         return popularBooks;
+    }
+
+    public void getBookImage(int isbn, String outputPath) throws Exception {
+        String sql = "SELECT image_data FROM public.books WHERE isbn = ?";
+
+        try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, isbn);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                byte[] imageData = rs.getBytes("image_data");
+
+                if (imageData != null) {
+                    try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+                        fos.write(imageData);
+                        System.out.println("Image saved to " + outputPath);
+                    }
+                } else {
+                    System.out.println("No image found for ISBN: " + isbn);
+                }
+            } else {
+                System.out.println("No book found with ISBN: " + isbn);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching image data: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error saving image: " + e.getMessage());
+        }
     }
 }
