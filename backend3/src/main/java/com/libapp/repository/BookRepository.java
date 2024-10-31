@@ -2,14 +2,33 @@ package com.libapp.repository;
 
 import com.libapp.model.Book;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class BookRepository {
-    private static final String URL = "jdbc:postgresql://libappdb-libapp.g.aivencloud.com:11484/defaultdb?sslmode=require";
-    private static final String USER = "avnadmin";
-    private static final String PASSWORD = "AVNS_PCEElG1v4heesR-nEuF";
+    private String url;
+    private String user;
+    private String password;
+
+    public BookRepository() {
+        loadDatabaseConfig();
+    }
+
+    private void loadDatabaseConfig() {
+        Properties properties = new Properties();
+        try (FileInputStream input = new FileInputStream("config.properties")) {
+            properties.load(input);
+            this.url = properties.getProperty("db.url");
+            this.user = properties.getProperty("db.user");
+            this.password = properties.getProperty("db.password");
+        } catch (IOException e) {
+            System.out.println("Error loading database config: " + e.getMessage());
+        }
+    }
 
     private Connection connect() throws SQLException {
         try {
@@ -19,7 +38,7 @@ public class BookRepository {
         }
 
         // Establish connection and print a message
-        Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        Connection conn = DriverManager.getConnection(url, user, password);
         System.out.println("Connected to the database.");
         return conn;
     }
