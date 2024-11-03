@@ -13,7 +13,7 @@ public class SimpleHttpServer {
         server.createContext("/api/books/search", new SearchBooksHandler());
         server.createContext("/api/books", new GetBookHandler());
         server.createContext("/api/books/popular", new PopularBooksHandler());
-        server.createContext("/api/books/image", new GetImageHandler());
+        server.createContext("/api/books/image/", new GetImageHandler());
 
         server.setExecutor(null); // creates a default executor
         server.start();
