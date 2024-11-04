@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.List; // Import List instead of ArrayList
 
 public class SearchBooksHandler implements HttpHandler {
     private final BookRepository repository = new BookRepository();
@@ -46,7 +46,8 @@ public class SearchBooksHandler implements HttpHandler {
                 }
             }
 
-            ArrayList<Book> books = repository.findByKeyword(keyword);
+            // Change ArrayList to List
+            List<Book> books = repository.findByKeyword(keyword);
 
             // Convert the list of books to JSON format
             String jsonResponse = gson.toJson(books);

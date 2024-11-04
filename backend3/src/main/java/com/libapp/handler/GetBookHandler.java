@@ -13,7 +13,6 @@ public class GetBookHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
         // Set CORS headers
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -28,41 +27,25 @@ public class GetBookHandler implements HttpHandler {
             String path = exchange.getRequestURI().getPath();
             String isbnStr = path.substring(path.lastIndexOf("/") + 1);
 
-            try {
-                int isbn = Integer.parseInt(isbnStr);
-                Book book = repository.findByIsbn(isbn);
+            // Use the ISBN as a String directly
+            Book book = repository.findByIsbn(isbnStr); // No conversion to int
 
-                String response;
-                if (book != null) {
-                    response = book.toJson();
-                    exchange.sendResponseHeaders(200, response.getBytes().length);
-                } else {
-                    response = "{ \"message\": \"Book not found\" }";
-                    exchange.sendResponseHeaders(404, response.getBytes().length);
-                }
-                exchange.getResponseHeaders().add("Content-Type", "application/json");
+            String response;
+            if (book != null) {
+                response = book.toJson();
+                exchange.sendResponseHeaders(200, response.getBytes().length);
+            } else {
+                response = "{ \"message\": \"Book not found\" }";
+                exchange.sendResponseHeaders(404, response.getBytes().length);
+            }
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
 
-                try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(response.getBytes());
-                }
-            } catch (NumberFormatException e) {
-                String response = "{ \"message\": \"Invalid ISBN format\" }";
-                exchange.sendResponseHeaders(400, response.getBytes().length);
-                System.out.println("Invalid ISBN format. Error: " + e.getMessage());
-            } catch (IOException e) {
-                String response = "{ \"message\": \"Internal server error\" }";
-                exchange.sendResponseHeaders(500, response.getBytes().length);
-                System.out.println("Internal server error.");
-                exchange.getResponseHeaders().add("Content-Type", "application/json");
-                try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(response.getBytes());
-                }
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes());
             }
         } else {
             exchange.sendResponseHeaders(405, -1); // 405 Method Not Allowed
             System.out.println("Method not allowed.");
         }
     }
-
 }
-

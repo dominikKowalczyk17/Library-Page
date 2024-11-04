@@ -3,29 +3,30 @@ package com.libapp.model;
 import com.google.gson.Gson;
 
 public class Book {
-    private int isbn;
-    private String name;
+    private String isbn; // Consider keeping ISBN as a String
+    private String title;
     private String genre;
     private String description;
     private String author;
     private int popularityScore;
 
     // Constructor
-    public Book(int isbn, String name, String genre, String description, String author, int popularityScore) {
+    public Book(String isbn, String title, String genre, String description, String author, int popularityScore) {
         this.isbn = isbn;
-        this.name = name;
+        this.title = title;
         this.genre = genre;
         this.description = description;
         this.author = author;
         this.popularityScore = popularityScore;
     }
 
-    public int getIsbn() {
+    // Getters
+    public String getIsbn() {
         return isbn;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
     public String getGenre() {
@@ -49,4 +50,3 @@ public class Book {
         return gson.toJson(this);
     }
 }
-
