@@ -9,15 +9,17 @@ public class Book {
     private String description;
     private String author;
     private int popularityScore;
+    private String imagePath;
 
     // Constructor
-    public Book(String isbn, String title, String genre, String description, String author, int popularityScore) {
+    public Book(String isbn, String title, String genre, String description, String author, int popularityScore, String imagePath) {
         this.isbn = isbn;
         this.title = title;
         this.genre = genre;
         this.description = description;
         this.author = author;
         this.popularityScore = popularityScore;
+        this.imagePath = imagePath;
     }
 
     // Getters
@@ -48,5 +50,9 @@ public class Book {
     public String toJson() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }
