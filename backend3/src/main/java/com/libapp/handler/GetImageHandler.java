@@ -15,10 +15,18 @@ public class GetImageHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+
+        // Handle OPTIONS request
+        if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+            exchange.sendResponseHeaders(200, -1);
+            return;
+        }
+
         String path = exchange.getRequestURI().getPath();
         String filename = path.substring("/api/books/image/".length());
-
-        // Find the image using the relative path
         File file = findImageFile(filename);
 
         if (file != null && file.exists()) {
@@ -33,6 +41,8 @@ public class GetImageHandler implements HttpHandler {
                 while ((bytesRead = fis.read(buffer)) != -1) {
                     os.write(buffer, 0, bytesRead);
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } else {
             String response = "Image not found";
@@ -42,6 +52,7 @@ public class GetImageHandler implements HttpHandler {
             }
         }
     }
+
 
     private File findImageFile(String filename) {
         String[] extensions = {".jpg", ".jpeg", ".jfif"};

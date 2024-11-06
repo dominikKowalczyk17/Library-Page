@@ -111,11 +111,12 @@ public class BookRepository {
     public List<Book> findPopularBooks() {
         String sql = "SELECT * FROM public.books WHERE popularity_score > 9 ORDER BY popularity_score DESC LIMIT 10";
         List<Book> popularBooks = new ArrayList<>();
+        String baserUrl = "http://localhost:8081/";
         try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 String rawImagePath = rs.getString("image_path");
-                String imagePath = rawImagePath != null ? rawImagePath.replace("\\", "/") : null;
+                String imagePath = rawImagePath != null ? baserUrl + rawImagePath.replace("\\", "/") : null;
                 popularBooks.add(new Book(
                         rs.getString("isbn"),
                         rs.getString("title"),
