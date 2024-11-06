@@ -3,8 +3,9 @@ package com.libapp.repository;
 import com.libapp.model.Book;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,7 @@ public class BookRepository {
             pstmt.setString(4, book.getDescription());
             pstmt.setString(5, book.getAuthor());
             pstmt.setInt(6, book.getPopularityScore());
+            pstmt.setString(7, book.getImagePath());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -71,7 +73,8 @@ public class BookRepository {
                         rs.getString("genre"),
                         rs.getString("description"),
                         rs.getString("author"),
-                        rs.getInt("popularity_score")
+                        rs.getInt("popularity_score"),
+                        rs.getString("image_path")
                 );
             } else {
                 System.out.println("No book found with ISBN: " + isbn);
@@ -95,7 +98,8 @@ public class BookRepository {
                         rs.getString("genre"),
                         rs.getString("description"),
                         rs.getString("author"),
-                        rs.getInt("popularity_score")
+                        rs.getInt("popularity_score"),
+                        rs.getString("image_path")
                 ));
             }
         } catch (SQLException e) {
@@ -110,13 +114,16 @@ public class BookRepository {
         try (Connection conn = connect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
+                String rawImagePath = rs.getString("image_path");
+                String imagePath = rawImagePath != null ? rawImagePath.replace("\\", "/") : null;
                 popularBooks.add(new Book(
                         rs.getString("isbn"),
                         rs.getString("title"),
                         rs.getString("genre"),
                         rs.getString("description"),
                         rs.getString("author"),
-                        rs.getInt("popularity_score")
+                        rs.getInt("popularity_score"),
+                        imagePath
                 ));
             }
         } catch (SQLException e) {
@@ -124,4 +131,46 @@ public class BookRepository {
         }
         return popularBooks;
     }
+
+//    public void updateImagePaths() {
+//        String selectSQL = "SELECT isbn FROM books";
+//        String updateSQL = "UPDATE books SET image_path = ? WHERE isbn = ?";
+//        String IMAGE_DIRECTORY = "images/book_covers/";
+//
+//        String[] extensions = {".jpg", ".jpeg", ".jfif"};
+//
+//        try (Connection conn = connect();
+//             PreparedStatement selectStmt = conn.prepareStatement(selectSQL);
+//             PreparedStatement updateStmt = conn.prepareStatement(updateSQL)) {
+//
+//            ResultSet rs = selectStmt.executeQuery();
+//
+//            while (rs.next()) {
+//                String isbn = rs.getString("isbn");
+//                String relativePath = findRelativeImagePath(isbn, IMAGE_DIRECTORY, extensions);
+//
+//                if (relativePath != null) {
+//                    updateStmt.setString(1, relativePath);
+//                    updateStmt.setString(2, isbn);
+//                    updateStmt.executeUpdate();
+//                    System.out.println("Updated image path for ISBN: " + isbn);
+//                } else {
+//                    System.out.println("Image not found for ISBN: " + isbn);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Error updating image paths: " + e.getMessage());
+//        }
+//    }
+//
+//    private String findRelativeImagePath(String isbn, String imageDirectory, String[] extensions) {
+//        for (String ext : extensions) {
+//            Path imagePath = Paths.get(imageDirectory, isbn + ext);
+//            if (imagePath.toFile().exists()) {
+//                return imagePath.toString();
+//            }
+//        }
+//        return null;
+//    }
+
 }

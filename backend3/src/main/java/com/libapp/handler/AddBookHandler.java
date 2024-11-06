@@ -40,7 +40,8 @@ public class AddBookHandler implements HttpHandler {
                     json.getString("genre"),
                     json.getString("description"),
                     json.getString("author"),
-                    json.optInt("popularity_score", 0)
+                    json.optInt("popularity_score", 0),
+                    json.getString("image_path")
             );
 
             repository.addBook(book);

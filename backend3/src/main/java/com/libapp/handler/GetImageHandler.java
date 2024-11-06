@@ -7,16 +7,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class GetImageHandler implements HttpHandler {
-    private static final String IMAGE_DIRECTORY = "C:\\Users\\Dominik\\Desktop\\Projects\\Library-Page\\backend3\\images\\book_covers\\";
+    private static final String IMAGE_DIRECTORY = "images/book_covers/";
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
-        String filename = path.substring("/api/books/image/".length()); // e.g., "9780060850524"
+        String filename = path.substring("/api/books/image/".length());
 
-        // Check for different possible extensions
+        // Find the image using the relative path
         File file = findImageFile(filename);
 
         if (file != null && file.exists()) {
@@ -44,7 +46,9 @@ public class GetImageHandler implements HttpHandler {
     private File findImageFile(String filename) {
         String[] extensions = {".jpg", ".jpeg", ".jfif"};
         for (String ext : extensions) {
-            File file = new File(IMAGE_DIRECTORY, filename + ext);
+            Path imagePath = Paths.get(System.getProperty("user.dir"), IMAGE_DIRECTORY, filename + ext);
+            System.out.println(imagePath);
+            File file = imagePath.toFile();
             if (file.exists()) {
                 return file;
             }
