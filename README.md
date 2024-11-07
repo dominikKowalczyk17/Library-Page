@@ -42,7 +42,6 @@ Dependencies
   TailwindCSS: For styling
   React Icons: For including icons in the Navbar
 
-Contribution
 Feel free to open an issue or submit a pull request for any features, improvements, or bug fixes.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -119,5 +118,4 @@ Example Requests:
   Get Book Image:
     GET http://localhost:8081/api/books/image/12345
 
-License
 This project is open-source and available for modification and distribution.
